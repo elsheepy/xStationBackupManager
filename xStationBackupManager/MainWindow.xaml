@@ -3,28 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:xStationBackupManager"
+        xmlns:local="clr-namespace:xStationBackupManager" xmlns:controls="clr-namespace:xStationBackupManager.Controls"
         mc:Ignorable="d"
         DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
-        Title="MainWindow" Height="450" Width="800">
+        x:Name="Container"
+        Title="X-Station Backup Manager" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="20" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0" Grid.ColumnSpan="3">
             <MenuItem Header="_Datei">
                 <MenuItem Header="_Einstellungen" Command="{Binding SettingsCommand}" />
                 <Separator />
                 <MenuItem Header="_Beenden" Command="{Binding CloseCommand}" />
             </MenuItem>
         </Menu>
-        <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="RomViewModel">
-                    <Label Content="{Binding Name}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+
+        <TextBox Grid.Row="1" Text="{Binding DatabasePath}" IsEnabled="false" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" />
+
+        <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" />
     </Grid>
 </Window>
