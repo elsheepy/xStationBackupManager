@@ -7,7 +7,23 @@
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/IconsDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
+            <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
+            <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" />
+        </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="RomViewModel">

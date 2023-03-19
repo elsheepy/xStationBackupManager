@@ -10,7 +10,7 @@ using xStationBackupManager.Contracts;
 using xStationBackupManager.Enums;
 
 namespace xStationBackupManager.ViewModels {
-    internal class MainWindowViewModel : ViewModelBase, IMainWindowViewModel {
+    internal class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, ISelectRomsCommandProvider {
         private readonly IOptionsManager _options;
         private readonly IRomManager _romManager; 
 
@@ -33,6 +33,12 @@ namespace xStationBackupManager.ViewModels {
         public RelayCommand TransferToDatabaseCommand { get; }
 
         public RelayCommand RefreshDrivesCommand { get; }
+
+        public RelayCommand<bool> SelectAllRomsCommand { get; }
+
+        public RelayCommand<bool> DeselectAllRomsCommand { get; }
+
+        public RelayCommand<bool> SelectDeltaRomsCommand { get; }
 
         public string DatabasePath {
             get => _databasePath;
@@ -101,6 +107,7 @@ namespace xStationBackupManager.ViewModels {
         }
 
         public string LogText => _logText;
+
         public MainWindowViewModel(IOptionsManager options, IRomManager romManager) {
             _options = options;
             DatabasePath = _options.GetOption(Options.RomPath).GetValue();
@@ -117,6 +124,9 @@ namespace xStationBackupManager.ViewModels {
             TransferToDeviceCommand = new RelayCommand(TransferToDeviceCommandExecuted);
             TransferToDatabaseCommand = new RelayCommand(TransferToDatabaseCommandExecuted);
             RefreshDrivesCommand = new RelayCommand(RefreshDrivesCommandExecuted);
+            SelectAllRomsCommand = new RelayCommand<bool>(SelectAllRomsCommandExecuted);
+            DeselectAllRomsCommand = new RelayCommand<bool>(DeselectAllRomsCommandExecuted);
+            SelectDeltaRomsCommand = new RelayCommand<bool>(SelectDeltaRomsCommandExecuted);
 
             Log("Wilkommen");
         }
@@ -197,6 +207,31 @@ namespace xStationBackupManager.ViewModels {
                 result.Add(drive.Name);
             }
             Drives = result.ToArray();
+        }
+
+        private void SelectAllRomsCommandExecuted(bool isDrive) {
+            var roms = isDrive ? DriveRoms : DatabaseRoms;
+            if (roms == null) return;
+            foreach (var rom in roms) {
+                rom.Selected = true;
+            }
+        }
+
+        private void DeselectAllRomsCommandExecuted(bool isDrive) {
+            var roms = isDrive ? DriveRoms : DatabaseRoms;
+            if (roms == null) return;
+            foreach (var rom in roms) {
+                rom.Selected = false;
+            }
+        }
+
+        private void SelectDeltaRomsCommandExecuted(bool isDrive) {
+            var roms = isDrive ? DriveRoms : DatabaseRoms;
+            var compareRoms = isDrive ? DatabaseRoms : DriveRoms;
+            if (roms == null || compareRoms == null) return;
+            foreach (var rom in roms) {
+                rom.Selected = compareRoms.FirstOrDefault(x => x.Name.Equals(rom.Name)) == null;
+            }
         }
 
         private void Log(string message) {

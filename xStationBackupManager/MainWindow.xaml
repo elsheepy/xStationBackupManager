@@ -55,7 +55,7 @@
         </Menu>
 
         <TextBox Grid.Row="1" Text="{Binding DatabasePath}" IsEnabled="false" />
-        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" />
 
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
             <Button Content="{StaticResource IconArrowRight}" Command="{Binding TransferToDeviceCommand}" />
@@ -63,7 +63,7 @@
         </StackPanel>
 
         <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
-        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" IsDrive="True" />
 
         <GroupBox Header="Progress" Grid.Row="3" Grid.Column="0">
             <Grid>
