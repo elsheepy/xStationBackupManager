@@ -68,7 +68,18 @@ namespace xStationBackupManager.Manager {
                 _currentRom = rom;
                 if(Directory.Exists(rom.Path)) {
                     // Directory with Rom
-                    var asd = true;
+                    Progress?.Invoke(this, new Events.ProgressEventArgs(0, GetTotalProgress(0), rom.Name));
+                    var info = new DirectoryInfo(rom.Path);
+                    var targetPath = $"{target}{info.Name}\\";
+                    Directory.CreateDirectory(targetPath);
+                    var files = Directory.GetFiles(rom.Path);
+                    for(int i = 0; i < files.Length; i++) {
+                        var file = files[i];
+                        var fileInfo = new FileInfo(file);
+                        File.Copy(file, $"{targetPath}{fileInfo.Name}");
+                        var progress = 100 * (i + 1) / files.Length;
+                        Progress?.Invoke(this, new Events.ProgressEventArgs(progress, GetTotalProgress(progress), rom.Name));
+                    }
                 } else {
                     // File Rom
                     var fileInfo = new FileInfo(rom.Path);
@@ -85,7 +96,11 @@ namespace xStationBackupManager.Manager {
         }
 
         private void Extractor_Extracting(object? sender, ProgressEventArgs e) {
-            Progress?.Invoke(this, new Events.ProgressEventArgs(e.PercentDone, (_romsCompleted * 100 + e.PercentDone) / _romsTotal, _currentRom.Name));
+            Progress?.Invoke(this, new Events.ProgressEventArgs(e.PercentDone, GetTotalProgress(e.PercentDone), _currentRom.Name));
+        }
+
+        private int GetTotalProgress(int romProgress) {
+            return (_romsCompleted * 100 + romProgress) / _romsTotal;
         }
     }
 }
