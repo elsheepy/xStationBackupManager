@@ -81,8 +81,6 @@ namespace xStationBackupManager.Manager {
                 }
             }
 
-            MessageBox.Show("Alle Roms entpackt");
-
             return true;
         }
 

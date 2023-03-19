@@ -119,10 +119,6 @@ namespace xStationBackupManager.ViewModels {
             RefreshDrivesCommand = new RelayCommand(RefreshDrivesCommandExecuted);
 
             Log("Wilkommen");
-            for(int i = 0; i < 100; i++) {
-                Log($"Wilkommen {i}");
-
-            }
         }
 
         private void RomManagerOnRomCompleted(object sender, Events.RomEventArgs e) {

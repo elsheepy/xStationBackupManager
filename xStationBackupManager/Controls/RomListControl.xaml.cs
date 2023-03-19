@@ -8,11 +8,7 @@ namespace xStationBackupManager.Controls {
     /// Interaktionslogik für RomListControl.xaml
     /// </summary>
     public partial class RomListControl : UserControl {
-        public static DependencyProperty RomsProperty = DependencyProperty.Register(nameof(Roms), typeof(RomViewModel[]), typeof(RomListControl), new PropertyMetadata(default(RomViewModel[]), changed));
-
-        public static void changed(DependencyObject obj, DependencyPropertyChangedEventArgs e) {
-            var bla = true;
-        }
+        public static DependencyProperty RomsProperty = DependencyProperty.Register(nameof(Roms), typeof(RomViewModel[]), typeof(RomListControl));
 
         public RomViewModel[] Roms {
             get => (RomViewModel[])GetValue(RomsProperty);
