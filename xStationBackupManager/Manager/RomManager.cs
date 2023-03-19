@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using SevenZip;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,6 +13,7 @@ namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
         private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
+        private readonly string[] ZipExtensions = new[] { ".7z" };
 
         public event Events.ProgressEventHandler Progress;
         public event Events.RomEventHandler RomCompleted;
@@ -25,9 +27,9 @@ namespace xStationBackupManager.Manager {
 
             var result = new List<IRom>();
             foreach (var file in Directory.GetFiles(path)) {
-                if (!file.Contains(".7z")) continue;
-                var rom = _scope.Resolve<IRom>();
                 var fileInfo = new FileInfo(file);
+                if (!ZipExtensions.Contains(fileInfo.Extension)) continue;
+                var rom = _scope.Resolve<IRom>();
                 rom.Name = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
                 rom.Path = file;
                 result.Add(rom);
@@ -86,7 +88,11 @@ namespace xStationBackupManager.Manager {
                     SevenZipCompressor.SetLibraryPath(@"x64\7z.dll");
                     var extractor = new SevenZipExtractor(rom.Path);
                     extractor.Extracting += Extractor_Extracting;
-                    await extractor.ExtractArchiveAsync($"{target}{rom.Name}");
+                    try {
+                        await extractor.ExtractArchiveAsync($"{target}{rom.Name}");
+                    } catch(Exception ex) {
+                        var msg = ex.Message;
+                    }
                     _romsCompleted++;
                     RomCompleted?.Invoke(this, new Events.RomEventArgs(rom));
                 }
