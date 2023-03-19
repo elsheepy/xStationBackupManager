@@ -11,7 +11,14 @@
         <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="RomViewModel">
-                    <Label Content="{Binding Name}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox IsChecked="{Binding Selected}" />
+                        <Label Grid.Column="1" Content="{Binding Name}" />
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

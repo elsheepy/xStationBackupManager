@@ -17,10 +17,19 @@ namespace xStationBackupManager.ViewModels {
         private string[] _drives;
         private string _databasePath;
         private string _drivePath;
+        private string _currentRom;
+        private int _romProgress;
+        private int _totalProgress;
 
         public RelayCommand CloseCommand { get; }
 
         public RelayCommand SettingsCommand { get; }
+
+        public RelayCommand TransferToDeviceCommand { get; }
+
+        public RelayCommand TransferToDatabaseCommand { get; }
+
+        public RelayCommand RefreshDrivesCommand { get; }
 
         public string DatabasePath {
             get => _databasePath;
@@ -64,16 +73,56 @@ namespace xStationBackupManager.ViewModels {
             }
         }
 
+        public string CurrentRom {
+            get => _currentRom;
+            set {
+                _currentRom = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int RomProgress {
+            get => _romProgress;
+            set {
+                _romProgress = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int TotalProgress {
+            get => _totalProgress;
+            set {
+                _totalProgress = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public MainWindowViewModel(IOptionsManager options, IRomManager romManager) {
             _options = options;
             DatabasePath = _options.GetOption(Options.RomPath).GetValue();
-            CloseCommand = new RelayCommand(CloseCommandExecuted);
-            SettingsCommand = new RelayCommand(SettingsCommandExecuted);
             _romManager = romManager;
+            _romManager.Progress += RomManagerOnProgress;
+            _romManager.RomCompleted += RomManagerOnRomCompleted;
 
             DatabaseRoms = GetRoms(DatabasePath);
 
             RefreshDrivesCommandExecuted();
+
+            CloseCommand = new RelayCommand(CloseCommandExecuted);
+            SettingsCommand = new RelayCommand(SettingsCommandExecuted);
+            TransferToDeviceCommand = new RelayCommand(TransferToDeviceCommandExecuted);
+            TransferToDatabaseCommand = new RelayCommand(TransferToDatabaseCommandExecuted);
+            RefreshDrivesCommand = new RelayCommand(RefreshDrivesCommandExecuted);
+        }
+
+        private void RomManagerOnRomCompleted(object sender, Events.RomEventArgs e) {
+            CurrentRom = string.Empty;
+        }
+
+        private void RomManagerOnProgress(object sender, Events.ProgressEventArgs e) {
+            if (string.IsNullOrWhiteSpace(CurrentRom)) CurrentRom = e.CurrentRom;
+            RomProgress = e.RomProgress;
+            TotalProgress = e.TotalProgress;
         }
 
         private RomViewModel[] GetRoms(string path) {
@@ -91,6 +140,34 @@ namespace xStationBackupManager.ViewModels {
 
         private void SettingsCommandExecuted() {
 
+        }
+
+        private void TransferToDeviceCommandExecuted() {
+            TransferRoms(DatabaseRoms, DrivePath);
+        }
+
+        private void TransferToDatabaseCommandExecuted() {
+            TransferRoms(DriveRoms, DatabasePath);
+        }
+
+        private void TransferRoms(RomViewModel[] romRawList, string targetPath) {
+            if(!Directory.Exists(targetPath)) {
+                MessageBox.Show("Es wurde kein gültiger Pfad angegeben", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var romList = new List<IRom>();
+            foreach (var rom in romRawList) {
+                if (!rom.Selected) continue;
+                romList.Add(rom.Rom);
+            }
+
+            if (romList.Count == 0) {
+                MessageBox.Show("Es wurde keine Roms ausgewählt", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            _romManager.TransferRoms(romList.ToArray(), targetPath);
         }
 
         private void RefreshDrivesCommandExecuted() {

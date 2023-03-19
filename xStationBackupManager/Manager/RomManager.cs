@@ -1,12 +1,20 @@
 ﻿using Autofac;
+using SevenZip;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Windows.Documents;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using xStationBackupManager.Contracts;
 
 namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
+        private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
+
+        public event Events.ProgressEventHandler Progress;
+        public event Events.RomEventHandler RomCompleted;
 
         public RomManager(ILifetimeScope scope) {
             _scope = scope;
@@ -24,7 +32,62 @@ namespace xStationBackupManager.Manager {
                 rom.Path = file;
                 result.Add(rom);
             }
-            return result.ToArray();
+            foreach (var directory in Directory.GetDirectories(path)) {
+                var isRom = false;
+                foreach (var file in Directory.GetFiles(directory)) {
+                    if (RomExtensions.Contains(new FileInfo(file).Extension)) {
+                        isRom = true;
+                        break;
+                    }
+                }
+                if(!isRom) {
+                    var roms = GetRoms(directory);
+                    if (roms.Length > 0) result.AddRange(roms);
+                    continue;
+                }
+                var rom = _scope.Resolve<IRom>();
+                var fileInfo = new DirectoryInfo(directory);
+                rom.Name = fileInfo.Name;
+                rom.Path = directory;
+                result.Add(rom);
+            }
+            return result.OrderBy(x => x.Name).ToArray();
+        }
+
+        private IRom _currentRom;
+        private int _romsCompleted;
+        private int _romsTotal;
+
+        public async Task<bool> TransferRoms(IRom[] roms, string target) {
+            if (!Directory.Exists(target)) return false;
+
+            _romsCompleted = 0;
+            _romsTotal = roms.Length;
+
+            foreach (var rom in roms) {
+                _currentRom = rom;
+                if(Directory.Exists(rom.Path)) {
+                    // Directory with Rom
+                    var asd = true;
+                } else {
+                    // File Rom
+                    var fileInfo = new FileInfo(rom.Path);
+                    SevenZipCompressor.SetLibraryPath(@"x64\7z.dll");
+                    var extractor = new SevenZipExtractor(rom.Path);
+                    extractor.Extracting += Extractor_Extracting;
+                    await extractor.ExtractArchiveAsync($"{target}{rom.Name}");
+                    _romsCompleted++;
+                    RomCompleted?.Invoke(this, new Events.RomEventArgs(rom));
+                }
+            }
+
+            MessageBox.Show("Alle Roms entpackt");
+
+            return true;
+        }
+
+        private void Extractor_Extracting(object? sender, ProgressEventArgs e) {
+            Progress?.Invoke(this, new Events.ProgressEventArgs(e.PercentDone, (_romsCompleted * 100 + e.PercentDone) / _romsTotal, _currentRom.Name));
         }
     }
 }

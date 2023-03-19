@@ -8,11 +8,19 @@
         DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
         x:Name="Container"
         Title="X-Station Backup Manager" Height="450" Width="800">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/IconsDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="20" />
             <RowDefinition />
+            <RowDefinition Height="150" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -30,7 +38,32 @@
         <TextBox Grid.Row="1" Text="{Binding DatabasePath}" IsEnabled="false" />
         <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" />
 
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
+            <Button Content="{StaticResource IconArrowRight}" Command="{Binding TransferToDeviceCommand}" />
+            <Button Content="{StaticResource IconArrowLeft}" Command="{Binding TransferToDatabaseCommand}" />
+        </StackPanel>
+
         <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
         <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" />
+
+        <Grid Grid.Row="3" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Rom:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            <Label Grid.Row="1" Content="{Binding CurrentRom}" VerticalContentAlignment="Center" />
+            <ProgressBar Grid.Row="2" Minimum="0" Maximum="100" Value="{Binding RomProgress}" />
+            <Label Grid.Row="3" Content="Gesamt:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            <ProgressBar Grid.Row="4" Minimum="0" Maximum="100" Value="{Binding TotalProgress}" />
+        </Grid>
+        
+        <GroupBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Header="Log">
+            <TextBox />
+        </GroupBox>
     </Grid>
 </Window>
