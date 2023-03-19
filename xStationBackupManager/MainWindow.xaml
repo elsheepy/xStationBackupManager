@@ -13,6 +13,25 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/IconsDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="ConsoleTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <ScrollViewer RenderTransformOrigin="0.5,0.5" VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer.RenderTransform>
+                                    <ScaleTransform ScaleY="-1"/>
+                                </ScrollViewer.RenderTransform>
+                                <TextBox Text="{TemplateBinding Text}" RenderTransformOrigin="0.5,0.5">
+                                    <TextBox.RenderTransform>
+                                        <ScaleTransform ScaleY="-1"/>
+                                    </TextBox.RenderTransform>
+                                </TextBox>
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -46,24 +65,26 @@
         <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
         <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" />
 
-        <Grid Grid.Row="3" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+        <GroupBox Header="Progress" Grid.Row="3" Grid.Column="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="Rom:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-            <Label Grid.Row="1" Content="{Binding CurrentRom}" VerticalContentAlignment="Center" />
-            <ProgressBar Grid.Row="2" Minimum="0" Maximum="100" Value="{Binding RomProgress}" />
-            <Label Grid.Row="3" Content="Gesamt:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-            <ProgressBar Grid.Row="4" Minimum="0" Maximum="100" Value="{Binding TotalProgress}" />
-        </Grid>
-        
-        <GroupBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Header="Log">
-            <TextBox />
+                <Label Grid.Row="0" Content="Rom:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <Label Grid.Row="1" Content="{Binding CurrentRom}" VerticalContentAlignment="Center" />
+                <ProgressBar Grid.Row="2" Minimum="0" Maximum="100" Value="{Binding RomProgress}" />
+                <Label Grid.Row="3" Content="Gesamt:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <ProgressBar Grid.Row="4" Minimum="0" Maximum="100" Value="{Binding TotalProgress}" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="3" Grid.Column="2" Header="Log">
+            <TextBox Text="{Binding LogText, Mode=OneWay}" Style="{StaticResource ConsoleTextBox}"/>
         </GroupBox>
     </Grid>
 </Window>
