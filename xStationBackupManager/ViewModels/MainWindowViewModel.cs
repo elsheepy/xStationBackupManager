@@ -42,6 +42,8 @@ namespace xStationBackupManager.ViewModels {
 
         public RelayCommand<bool> SelectDeltaRomsCommand { get; }
 
+        public RelayCommand<bool> CheckAndFixDirectoryCommand { get; }
+
         public string DatabasePath {
             get => _databasePath;
             set {
@@ -131,6 +133,7 @@ namespace xStationBackupManager.ViewModels {
             SelectAllRomsCommand = new RelayCommand<bool>(SelectAllRomsCommandExecuted);
             DeselectAllRomsCommand = new RelayCommand<bool>(DeselectAllRomsCommandExecuted);
             SelectDeltaRomsCommand = new RelayCommand<bool>(SelectDeltaRomsCommandExecuted);
+            CheckAndFixDirectoryCommand = new RelayCommand<bool>(CheckAndFixDirectoryCommandExecuted);
 
             Log("Wilkommen");
         }
@@ -254,6 +257,12 @@ namespace xStationBackupManager.ViewModels {
             foreach (var rom in roms) {
                 rom.Selected = compareRoms.FirstOrDefault(x => x.Name.Equals(rom.Name)) == null;
             }
+        }
+
+        private void CheckAndFixDirectoryCommandExecuted(bool isDrive) {
+            var path = isDrive ? DrivePath : DatabasePath;
+            if (string.IsNullOrWhiteSpace(path)) return;
+            _romManager.CheckAndFixDirectory(path);
         }
 
         private void Log(string message) {

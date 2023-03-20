@@ -23,6 +23,7 @@ namespace xStationBackupManager.Controls {
             ctrl.RaisePropertyChanged(nameof(SelectAllRomsCommand));
             ctrl.RaisePropertyChanged(nameof(DeselectAllRomsCommand));
             ctrl.RaisePropertyChanged(nameof(SelectDeltaRomsCommand));
+            ctrl.RaisePropertyChanged(nameof(CheckAndFixDirectoryCommand));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -45,6 +46,7 @@ namespace xStationBackupManager.Controls {
         public RelayCommand<bool> SelectAllRomsCommand => CommandProvider?.SelectAllRomsCommand;
         public RelayCommand<bool> DeselectAllRomsCommand => CommandProvider?.DeselectAllRomsCommand;
         public RelayCommand<bool> SelectDeltaRomsCommand => CommandProvider?.SelectDeltaRomsCommand;
+        public RelayCommand<bool> CheckAndFixDirectoryCommand => CommandProvider?.CheckAndFixDirectoryCommand;
 
         public RomListControl() {
             InitializeComponent();

@@ -10,5 +10,6 @@ namespace xStationBackupManager.Contracts {
         public RelayCommand<bool> SelectAllRomsCommand { get; }
         public RelayCommand<bool> DeselectAllRomsCommand { get; }
         public RelayCommand<bool> SelectDeltaRomsCommand { get; }
+        public RelayCommand<bool> CheckAndFixDirectoryCommand { get; }
     }
 }

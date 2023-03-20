@@ -110,5 +110,34 @@ namespace xStationBackupManager.Manager {
         private int GetTotalProgress(int romProgress) {
             return (_romsCompleted * 100 + romProgress) / _romsTotal;
         }
+
+        public async Task CheckAndFixDirectory(string directory) {
+            var fixedDirs = new List<string>();
+            var directories = Directory.GetDirectories(directory);
+            foreach (var subDirectory in directories) {
+                var subDirectories = Directory.GetDirectories(subDirectory);
+                foreach (var subDirectory2 in subDirectories) {
+                    try {
+                        foreach(var dir in Directory.GetDirectories(subDirectory2)) {
+                            var dInfo = new DirectoryInfo(dir);
+                            Directory.Move(dir, $"{subDirectory}\\{dInfo.Name}");
+                        }
+                        foreach (var file in Directory.GetFiles(subDirectory2)) {
+                            var info = new FileInfo(file);
+                            File.Move(file, $"{subDirectory}\\{info.Name}");
+                        }
+                        fixedDirs.Add(new DirectoryInfo(subDirectory2).Name);
+                        Directory.Delete(subDirectory2);
+                    } catch(Exception ex) {
+                        var msg = ex.Message;
+                    }
+                }
+            }
+            if(fixedDirs.Count == 0) {
+                MessageBox.Show("Keine Fehler gefunden.", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Information);
+            } else {
+                MessageBox.Show($"{fixedDirs.Count} Fehler gefunden:\r\n\r\n{String.Join("\r\n", fixedDirs)}", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
     }
 }

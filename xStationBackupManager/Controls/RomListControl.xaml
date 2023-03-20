@@ -23,6 +23,7 @@
             <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
             <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
             <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" />
+            <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" />
         </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
             <ListView.ItemTemplate>

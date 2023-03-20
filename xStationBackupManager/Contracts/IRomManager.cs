@@ -9,5 +9,7 @@ namespace xStationBackupManager.Contracts {
         IRom[] GetRoms(string path);
 
         Task<bool> TransferRoms(IRom[] roms, string target);
+
+        Task CheckAndFixDirectory(string directory);
     }
 }
