@@ -54,7 +54,14 @@
             </MenuItem>
         </Menu>
 
-        <TextBox Grid.Row="1" Text="{Binding DatabasePath}" IsEnabled="false" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding DatabasePath}" IsEnabled="false" />
+            <Button Grid.Column="1" Content="{StaticResource IconSettings}" Command="{Binding SettingsCommand}" />
+        </Grid>
         <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" />
 
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
@@ -62,7 +69,15 @@
             <Button Content="{StaticResource IconArrowLeft}" Command="{Binding TransferToDatabaseCommand}" />
         </StackPanel>
 
-        <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
+            <Button Grid.Column="1" Content="{StaticResource IconRefresh}" Command="{Binding RefreshDrivesCommand}" />
+        </Grid>
+        
         <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" IsDrive="True" />
 
         <GroupBox Header="Progress" Grid.Row="3" Grid.Column="0">
