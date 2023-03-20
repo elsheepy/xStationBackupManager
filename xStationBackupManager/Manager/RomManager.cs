@@ -73,6 +73,7 @@ namespace xStationBackupManager.Manager {
                     // Directory with Rom
                     Progress?.Invoke(this, new Events.ProgressEventArgs(0, GetTotalProgress(0), rom.Name));
                     var info = new DirectoryInfo(rom.Path);
+                    if (target[target.Length-1] != '\\') { target += "\\"; }
                     var targetPath = $"{target}{info.Name}\\";
                     Directory.CreateDirectory(targetPath);
                     var files = Directory.GetFiles(rom.Path);
