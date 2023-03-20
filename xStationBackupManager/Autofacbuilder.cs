@@ -10,7 +10,7 @@ namespace xStationBackupManager {
         public static void Initialize() {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<Option>().As<IOption>();
+            builder.RegisterType<OptionImpl>().As<IOption>();
             builder.RegisterType<OptionsManager>().As<IOptionsManager>().SingleInstance();
 
             builder.RegisterType<Rom>().As<IRom>();
@@ -18,6 +18,7 @@ namespace xStationBackupManager {
 
             builder.RegisterType<ViewModelLocator>().As<IViewModelLocator>().SingleInstance();
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
+            builder.RegisterType<OptionsWindowViewModel>().As<IOptionsWindowViewModel>().SingleInstance();
 
             var container = builder.Build();
             Scope = container.BeginLifetimeScope();

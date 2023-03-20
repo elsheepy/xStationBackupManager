@@ -6,5 +6,8 @@ using System.Threading.Tasks;
 
 namespace xStationBackupManager.Contracts {
     public interface IMainWindowViewModel {
+        void OnViewActivated();
+
+        void OnViewDeactivated();
     }
 }

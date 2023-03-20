@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xStationBackupManager.Enums;
 
 namespace xStationBackupManager.Contracts {
-    internal interface IOption {
+    public interface IOption {
+        public event EventHandler Changed;
+
+        public Options Option { get; set; }
+
         public string GetValue();
 
         public void SetValue(string value);

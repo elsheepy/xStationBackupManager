@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace xStationBackupManager.Enums {
-    internal enum Options {
+    public enum Options {
         RomPath
     }
 }

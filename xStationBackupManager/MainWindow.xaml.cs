@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using xStationBackupManager.Contracts;
 
 namespace xStationBackupManager {
     /// <summary>
@@ -20,6 +23,16 @@ namespace xStationBackupManager {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+        }
+
+        protected override void OnActivated(EventArgs e) {
+            base.OnActivated(e);
+            Autofacbuilder.Scope.Resolve<IMainWindowViewModel>().OnViewActivated();
+        }
+
+        protected override void OnClosing(CancelEventArgs e) {
+            base.OnClosing(e);
+            Autofacbuilder.Scope.Resolve<IMainWindowViewModel>().OnViewDeactivated();
         }
     }
 }

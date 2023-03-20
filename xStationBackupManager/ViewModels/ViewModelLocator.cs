@@ -5,8 +5,11 @@ namespace xStationBackupManager.ViewModels {
     public class ViewModelLocator : IViewModelLocator {
         public IMainWindowViewModel MainWindowViewModel { get; }
 
+        public IOptionsWindowViewModel OptionsWindowViewModel { get; }
+
         public ViewModelLocator(ILifetimeScope scope) {
             MainWindowViewModel = scope.Resolve<IMainWindowViewModel>();
+            OptionsWindowViewModel = scope.Resolve<IOptionsWindowViewModel>();
         }       
     }
 }

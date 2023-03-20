@@ -1,0 +1,39 @@
+﻿<Window x:Class="xStationBackupManager.Views.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:xStationBackupManager.Views"
+        mc:Ignorable="d"
+        DataContext="{Binding OptionsWindowViewModel, Source={StaticResource ViewModelLocator}}"
+        Title="X-Station Backup Manager Einstellungen" Height="200" Width="400" Topmost="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Roms" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Roms Pfad:" />
+                <TextBox Grid.Column="1" Text="{Binding RomsPath}" />
+                <Button Grid.Column="2" Content="Durchsuchen" Command="{Binding BrowseRomPathCommand}" />
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Verwerfen" Command="{Binding CloseCommand}" />
+            <Button Content="Speichern" Command="{Binding SaveCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

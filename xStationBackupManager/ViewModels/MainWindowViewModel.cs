@@ -8,11 +8,13 @@ using System.Windows;
 using System.Windows.Input;
 using xStationBackupManager.Contracts;
 using xStationBackupManager.Enums;
+using xStationBackupManager.Views;
 
 namespace xStationBackupManager.ViewModels {
     internal class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, ISelectRomsCommandProvider {
         private readonly IOptionsManager _options;
-        private readonly IRomManager _romManager; 
+        private readonly IRomManager _romManager;
+        private readonly IOption _databasePathOption;
 
         private RomViewModel[] _databaseRoms;
         private RomViewModel[] _driveRoms;
@@ -110,11 +112,13 @@ namespace xStationBackupManager.ViewModels {
 
         public MainWindowViewModel(IOptionsManager options, IRomManager romManager) {
             _options = options;
-            DatabasePath = _options.GetOption(Options.RomPath).GetValue();
+            _databasePathOption = _options.GetOption(Options.RomPath);
             _romManager = romManager;
             _romManager.Progress += RomManagerOnProgress;
             _romManager.RomCompleted += RomManagerOnRomCompleted;
+            _databasePathOption.Changed += OnDatabasePathOptionChanged;
 
+            DatabasePath = _databasePathOption.GetValue();
             DatabaseRoms = GetRoms(DatabasePath);
 
             RefreshDrivesCommandExecuted();
@@ -129,6 +133,23 @@ namespace xStationBackupManager.ViewModels {
             SelectDeltaRomsCommand = new RelayCommand<bool>(SelectDeltaRomsCommandExecuted);
 
             Log("Wilkommen");
+        }
+
+        private void OnDatabasePathOptionChanged(object? sender, EventArgs e) {
+            DatabasePath = _databasePathOption.GetValue();
+            DatabaseRoms = GetRoms(DatabasePath);
+        }
+
+        public void OnViewActivated() {
+            // Wir prüfen ob wir ein Rom Verzeichnis haben, wen nicht öffnen wir die Optionen
+            var romDirOption = _options.GetOption(Options.RomPath);
+            if (string.IsNullOrWhiteSpace(romDirOption.GetValue())) {
+                SettingsCommandExecuted();
+            }
+        }
+
+        public void OnViewDeactivated() {
+
         }
 
         private void RomManagerOnRomCompleted(object sender, Events.RomEventArgs e) {
@@ -159,7 +180,8 @@ namespace xStationBackupManager.ViewModels {
         }
 
         private void SettingsCommandExecuted() {
-
+            var dialog = new OptionsWindow();
+            dialog.ShowDialog();
         }
 
         private void TransferToDeviceCommandExecuted() {
