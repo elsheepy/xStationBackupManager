@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.Windows;
 using xStationBackupManager.Contracts;
@@ -13,7 +14,7 @@ namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
         private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
-        private readonly string[] ZipExtensions = new[] { ".7z" };
+        private readonly string[] ZipExtensions = new[] { ".7z", ".zip", ".bzip2", ".gzip", ".tar", ".rar" };
 
         public event Events.ProgressEventHandler Progress;
         public event Events.RomEventHandler RomCompleted;
