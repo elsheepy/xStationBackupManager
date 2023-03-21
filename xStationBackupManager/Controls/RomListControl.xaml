@@ -20,10 +20,10 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
-            <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" />
-            <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" />
-            <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" />
+            <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen" />
+            <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle abwählen" />
+            <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen die nicht auf dem Ziel sind" />
+            <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Ordnerstruktur auf fehler prüfen" />
         </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
             <ListView.ItemTemplate>
