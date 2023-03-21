@@ -14,7 +14,7 @@
                 <Run Text="Version" />
                 <Run Text="{Binding Version}" />
             </TextBlock>
-            <TextBlock Text="Diese Software steht untder der GPL v3.0 Lizenz"  TextWrapping="Wrap" Margin="0,3"/>
+            <TextBlock Text="Diese Software steht unter der GPL v3.0 Lizenz"  TextWrapping="Wrap" Margin="0,3"/>
             <TextBlock Margin="0,3">           
                 <Hyperlink NavigateUri="https://github.com/elsheepy/xStationBackupManager" RequestNavigate="Hyperlink_RequestNavigate">
                     GitHub
