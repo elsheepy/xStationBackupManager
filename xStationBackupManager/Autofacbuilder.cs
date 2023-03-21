@@ -19,6 +19,7 @@ namespace xStationBackupManager {
             builder.RegisterType<ViewModelLocator>().As<IViewModelLocator>().SingleInstance();
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();
             builder.RegisterType<OptionsWindowViewModel>().As<IOptionsWindowViewModel>().SingleInstance();
+            builder.RegisterType<AboutWindowViewModel>().As<IAboutWindowViewModel>().SingleInstance();
 
             var container = builder.Build();
             Scope = container.BeginLifetimeScope();

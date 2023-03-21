@@ -52,6 +52,7 @@
                 <Separator />
                 <MenuItem Header="_Beenden" Command="{Binding CloseCommand}" />
             </MenuItem>
+            <MenuItem Header="_Über" Command="{Binding AboutCommand}" />
         </Menu>
 
         <Grid Grid.Row="1">

@@ -30,6 +30,8 @@ namespace xStationBackupManager.ViewModels {
 
         public RelayCommand SettingsCommand { get; }
 
+        public RelayCommand AboutCommand { get; }
+
         public RelayCommand TransferToDeviceCommand { get; }
 
         public RelayCommand TransferToDatabaseCommand { get; }
@@ -127,6 +129,7 @@ namespace xStationBackupManager.ViewModels {
 
             CloseCommand = new RelayCommand(CloseCommandExecuted);
             SettingsCommand = new RelayCommand(SettingsCommandExecuted);
+            AboutCommand = new RelayCommand(AboutCommandExecuted);
             TransferToDeviceCommand = new RelayCommand(TransferToDeviceCommandExecuted);
             TransferToDatabaseCommand = new RelayCommand(TransferToDatabaseCommandExecuted);
             RefreshDrivesCommand = new RelayCommand(RefreshDrivesCommandExecuted);
@@ -184,6 +187,11 @@ namespace xStationBackupManager.ViewModels {
 
         private void SettingsCommandExecuted() {
             var dialog = new OptionsWindow();
+            dialog.ShowDialog();
+        }
+
+        private void AboutCommandExecuted() {
+            var dialog = new AboutWindow();
             dialog.ShowDialog();
         }
 
