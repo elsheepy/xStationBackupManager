@@ -6,3 +6,5 @@ Open "OptionsManager.cs" and replace that path. Beside of that, there is no tran
 The complete functionality is to copy roms which were packed as 7z, to an sd card. More features will be available soon.
 
 ![Beautiful Image of an beautiful software](Screenshot.png)
+
+This software is licensed under the GPL v3

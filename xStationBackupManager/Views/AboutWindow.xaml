@@ -9,9 +9,10 @@
         Title="X-Station Backup Manager" Height="200" Width="200">
     <Grid Margin="5">
         <StackPanel>
-            <TextBlock Text="X-Station Backup Manager" FontWeight="Bold" FontSize="20" TextWrapping="Wrap"/>
-            <TextBlock Text="Version 0.1"  Margin="0,5"/>
-            <TextBlock>           
+            <TextBlock Text="X-Station Backup Manager" FontWeight="Bold" FontSize="20" TextWrapping="Wrap" Margin="0,3" />
+            <TextBlock Text="Version 0.1"  Margin="0,3"/>
+            <TextBlock Text="Diese Software steht untder der GPL v3.0 Lizenz"  TextWrapping="Wrap" Margin="0,3"/>
+            <TextBlock Margin="0,3">           
                 <Hyperlink NavigateUri="https://github.com/elsheepy/xStationBackupManager" RequestNavigate="Hyperlink_RequestNavigate">
                     GitHub
                 </Hyperlink>
