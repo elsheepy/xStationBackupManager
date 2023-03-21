@@ -10,7 +10,10 @@
     <Grid Margin="5">
         <StackPanel>
             <TextBlock Text="X-Station Backup Manager" FontWeight="Bold" FontSize="20" TextWrapping="Wrap" Margin="0,3" />
-            <TextBlock Text="Version 0.1"  Margin="0,3"/>
+            <TextBlock  Margin="0,3">
+                <Run Text="Version" />
+                <Run Text="{Binding Version}" />
+            </TextBlock>
             <TextBlock Text="Diese Software steht untder der GPL v3.0 Lizenz"  TextWrapping="Wrap" Margin="0,3"/>
             <TextBlock Margin="0,3">           
                 <Hyperlink NavigateUri="https://github.com/elsheepy/xStationBackupManager" RequestNavigate="Hyperlink_RequestNavigate">
