@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using xStationBackupManager.Contracts;
+using xStationBackupManager.Enums;
 using xStationBackupManager.ViewModels;
 
 namespace xStationBackupManager.Controls {
@@ -14,9 +13,10 @@ namespace xStationBackupManager.Controls {
     /// Interaktionslogik für RomListControl.xaml
     /// </summary>
     public partial class RomListControl : UserControl, INotifyPropertyChanged {
-        public static DependencyProperty RomsProperty = DependencyProperty.Register(nameof(Roms), typeof(RomViewModel[]), typeof(RomListControl));
+        public static DependencyProperty RomsProperty = DependencyProperty.Register(nameof(Roms), typeof(RomRootViewModel[]), typeof(RomListControl));
         public static DependencyProperty CommandProviderProperty = DependencyProperty.Register(nameof(CommandProvider), typeof(ISelectRomsCommandProvider), typeof(RomListControl), new PropertyMetadata(CommandProviderChanged));
         public static DependencyProperty IsDrivePropery = DependencyProperty.Register(nameof(IsDrive), typeof(bool), typeof(RomListControl));
+        public static DependencyProperty RomGroupProperty = DependencyProperty.Register(nameof(RomGroup), typeof(RomGroup), typeof(RomListControl));
 
         private static void CommandProviderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             RomListControl ctrl = (RomListControl)d;
@@ -28,8 +28,8 @@ namespace xStationBackupManager.Controls {
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public RomViewModel[] Roms {
-            get => (RomViewModel[])GetValue(RomsProperty);
+        public RomRootViewModel[] Roms {
+            get => (RomRootViewModel[])GetValue(RomsProperty);
             set => SetValue(RomsProperty, value);
         }
 
@@ -43,12 +43,29 @@ namespace xStationBackupManager.Controls {
             set => SetValue(IsDrivePropery, value);
         }
 
+        public string[] RomGroupOptions { get; set; }
+
+        public string RomGroupString {
+            get => RomGroup.ToString();
+            set {
+                if(Enum.TryParse<RomGroup>(value, out var group)) {
+                    RomGroup = group;
+                }
+            }
+        }
+
+        public RomGroup RomGroup {
+            get => (RomGroup)GetValue(RomGroupProperty);
+            set => SetValue(RomGroupProperty, value);
+        }
+
         public RelayCommand<bool> SelectAllRomsCommand => CommandProvider?.SelectAllRomsCommand;
         public RelayCommand<bool> DeselectAllRomsCommand => CommandProvider?.DeselectAllRomsCommand;
         public RelayCommand<bool> SelectDeltaRomsCommand => CommandProvider?.SelectDeltaRomsCommand;
         public RelayCommand<bool> CheckAndFixDirectoryCommand => CommandProvider?.CheckAndFixDirectoryCommand;
 
         public RomListControl() {
+            RomGroupOptions = Enum.GetNames(typeof(RomGroup));
             InitializeComponent();
         }
 

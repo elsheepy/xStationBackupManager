@@ -63,7 +63,7 @@
             <TextBox Text="{Binding DatabasePath}" IsEnabled="false" />
             <Button Grid.Column="1" Content="{StaticResource IconSettings}" Command="{Binding SettingsCommand}" />
         </Grid>
-        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" RomGroup="{Binding DataContext.DatabaseRomGroup, Mode=TwoWay, ElementName=Container}" />
 
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
             <Button Content="{StaticResource IconArrowRight}" Command="{Binding TransferToDeviceCommand}" />
@@ -78,8 +78,8 @@
             <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
             <Button Grid.Column="1" Content="{StaticResource IconRefresh}" Command="{Binding RefreshDrivesCommand}" />
         </Grid>
-        
-        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" IsDrive="True" />
+
+        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" RomGroup="{Binding DataContext.DriveRomGroup, Mode=TwoWay, ElementName=Container}" IsDrive="True" />
 
         <GroupBox Header="Progress" Grid.Row="3" Grid.Column="0">
             <Grid>

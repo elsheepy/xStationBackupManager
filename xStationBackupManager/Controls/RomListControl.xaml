@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vms="clr-namespace:xStationBackupManager.ViewModels"
              xmlns:local="clr-namespace:xStationBackupManager.Controls"
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -12,6 +13,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/IconsDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="TreeViewItemStyle_ExpandAll" TargetType="{x:Type TreeViewItem}">
+                <Setter Property="IsExpanded" Value="True"/>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -25,9 +29,16 @@
             <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen die nicht auf dem Ziel sind" />
             <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Ordnerstruktur auf fehler prüfen" />
         </StackPanel>
-        <ListView Grid.Row="1" ItemsSource="{Binding Roms}">
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="RomViewModel">
+        <ComboBox ItemsSource="{Binding RomGroupOptions}" SelectedItem="{Binding RomGroupString}" HorizontalAlignment="Right" />
+        <TreeView Grid.Row="1" ItemsSource="{Binding Roms}" ItemContainerStyle="{StaticResource TreeViewItemStyle_ExpandAll}">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type vms:RomRootViewModel}" ItemsSource="{Binding Entrys}">
+                    <TextBlock Text="Root" />
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type vms:RomCollectionViewModel}" ItemsSource="{Binding Entrys}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type vms:RomViewModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30" />
@@ -37,7 +48,7 @@
                         <Label Grid.Column="1" Content="{Binding Name}" />
                     </Grid>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </TreeView.Resources>
+        </TreeView>
     </Grid>
 </UserControl>

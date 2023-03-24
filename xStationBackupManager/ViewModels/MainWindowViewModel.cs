@@ -16,8 +16,8 @@ namespace xStationBackupManager.ViewModels {
         private readonly IRomManager _romManager;
         private readonly IOption _databasePathOption;
 
-        private RomViewModel[] _databaseRoms;
-        private RomViewModel[] _driveRoms;
+        private RomRootViewModel[] _databaseRoms;
+        private RomRootViewModel[] _driveRoms;
         private string[] _drives;
         private string _databasePath;
         private string _drivePath;
@@ -25,6 +25,8 @@ namespace xStationBackupManager.ViewModels {
         private int _romProgress;
         private int _totalProgress;
         private string _logText = string.Empty;
+        private RomGroup _driveRomGroup;
+        private RomGroup _databaseRomGroup;
 
         public RelayCommand CloseCommand { get; }
 
@@ -60,11 +62,11 @@ namespace xStationBackupManager.ViewModels {
                 if (_drivePath != null && _drivePath.Equals(value)) return;
                 _drivePath = value;
                 RaisePropertyChanged();
-                DriveRoms = GetRoms(_drivePath);
+                DriveRoms = GetRoms(_drivePath, DriveRomGroup);
             }
         }
 
-        public RomViewModel[] DatabaseRoms {
+        public RomRootViewModel[] DatabaseRoms {
             get => _databaseRoms;
             set {
                 _databaseRoms = value;
@@ -72,11 +74,29 @@ namespace xStationBackupManager.ViewModels {
             }
         }
 
-        public RomViewModel[] DriveRoms {
+        public RomGroup DatabaseRomGroup {
+            get => _databaseRomGroup;
+            set {
+                _databaseRomGroup = value;
+                RaisePropertyChanged();
+                DatabaseRoms = GetRoms(DatabasePath, DatabaseRomGroup);
+            }
+        }
+
+        public RomRootViewModel[] DriveRoms {
             get => _driveRoms;
             set {
                 _driveRoms = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public RomGroup DriveRomGroup {
+            get => _driveRomGroup;
+            set {
+                _driveRomGroup = value;
+                RaisePropertyChanged();
+                DriveRoms = GetRoms(DrivePath, DriveRomGroup);
             }
         }
 
@@ -123,7 +143,7 @@ namespace xStationBackupManager.ViewModels {
             _databasePathOption.Changed += OnDatabasePathOptionChanged;
 
             DatabasePath = _databasePathOption.GetValue();
-            DatabaseRoms = GetRoms(DatabasePath);
+            DatabaseRoms = GetRoms(DatabasePath, DatabaseRomGroup);
 
             RefreshDrivesCommandExecuted();
 
@@ -143,7 +163,7 @@ namespace xStationBackupManager.ViewModels {
 
         private void OnDatabasePathOptionChanged(object? sender, EventArgs e) {
             DatabasePath = _databasePathOption.GetValue();
-            DatabaseRoms = GetRoms(DatabasePath);
+            DatabaseRoms = GetRoms(DatabasePath, DatabaseRomGroup);
         }
 
         public void OnViewActivated() {
@@ -172,13 +192,43 @@ namespace xStationBackupManager.ViewModels {
             TotalProgress = e.TotalProgress;
         }
 
-        private RomViewModel[] GetRoms(string path) {
+        private RomRootViewModel[] GetRoms(string path, RomGroup group) {
+            var root = new RomRootViewModel();
             var roms = _romManager.GetRoms(path);
-            var romVms = new RomViewModel[roms.Length];
-            for (int i = 0; i < roms.Length; i++) {
-                romVms[i] = new RomViewModel(roms[i]);
+            var collections = _romManager.AssignRomsToCollection(roms, group);
+            if(collections == null) {
+                for (int i = 0; i < roms.Length; i++) {
+                    var vm = new RomViewModel(roms[i]);
+                    root.AllRoms.Add(vm);
+                    root.Entrys.Add(vm);
+                }
+                return new[] { root };
             }
-            return romVms;
+
+            var colVms = new RomCollectionViewModel[collections.Length];
+            for (int i = 0; i < collections.Length; i++) {
+                colVms[i] = new RomCollectionViewModel(collections[i]);
+                root.Entrys.Add(colVms[i]);
+                
+            }
+            var allRoms = new List<RomViewModel>();
+            foreach (var colVm in colVms) {
+                AddAllRoms(colVm, ref allRoms);
+            }
+            root.AllRoms = allRoms;
+            return new[] { root };
+        }
+
+        private void AddAllRoms(RomCollectionViewModel collection, ref List<RomViewModel> allRoms) {
+
+            foreach(var entry in collection.Entrys) {
+                var rom = entry as RomViewModel;
+                if(rom != null) {
+                    allRoms.Add(rom);
+                    continue;
+                }
+                AddAllRoms(entry as RomCollectionViewModel, ref allRoms);
+            }
         }
 
         private void CloseCommandExecuted() {
@@ -197,26 +247,26 @@ namespace xStationBackupManager.ViewModels {
 
         private void TransferToDeviceCommandExecuted() {
             Task.Run(async () => {
-                await TransferRoms(DatabaseRoms, DrivePath);
-                DriveRoms = GetRoms(DrivePath);
+                await TransferRoms(DatabaseRoms[0], DrivePath);
+                DriveRoms = GetRoms(DrivePath, DriveRomGroup);
             });
         }
 
         private void TransferToDatabaseCommandExecuted() {
             Task.Run(async () => {
-                await TransferRoms(DriveRoms, DatabasePath);
-                DatabaseRoms = GetRoms(DatabasePath);
+                await TransferRoms(DriveRoms[0], DatabasePath);
+                DatabaseRoms = GetRoms(DatabasePath, DatabaseRomGroup);
             });
         }
 
-        private async Task TransferRoms(RomViewModel[] romRawList, string targetPath) {
+        private async Task TransferRoms(RomRootViewModel romRoot, string targetPath) {
             if(!Directory.Exists(targetPath)) {
                 MessageBox.Show("Es wurde kein gültiger Pfad angegeben", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             var romList = new List<IRom>();
-            foreach (var rom in romRawList) {
+            foreach (var rom in romRoot.AllRoms) {
                 if (!rom.Selected) continue;
                 romList.Add(rom.Rom);
             }
@@ -243,27 +293,30 @@ namespace xStationBackupManager.ViewModels {
         }
 
         private void SelectAllRomsCommandExecuted(bool isDrive) {
-            var roms = isDrive ? DriveRoms : DatabaseRoms;
-            if (roms == null) return;
-            foreach (var rom in roms) {
-                rom.Selected = true;
-            }
+            var vms = isDrive ? DriveRoms : DatabaseRoms;
+            if (vms == null) return;
+            SetSelect(vms[0], true);
         }
 
         private void DeselectAllRomsCommandExecuted(bool isDrive) {
-            var roms = isDrive ? DriveRoms : DatabaseRoms;
-            if (roms == null) return;
-            foreach (var rom in roms) {
-                rom.Selected = false;
+            var vms = isDrive ? DriveRoms : DatabaseRoms;
+            if (vms == null) return;
+            SetSelect(vms[0], false);
+        }
+
+        private void SetSelect(RomRootViewModel root, bool selected) {
+            foreach (var rom in root.AllRoms) {
+                rom.Selected = selected;
+                continue;                
             }
         }
 
         private void SelectDeltaRomsCommandExecuted(bool isDrive) {
-            var roms = isDrive ? DriveRoms : DatabaseRoms;
-            var compareRoms = isDrive ? DatabaseRoms : DriveRoms;
-            if (roms == null || compareRoms == null) return;
-            foreach (var rom in roms) {
-                rom.Selected = compareRoms.FirstOrDefault(x => x.Name.Equals(rom.Name)) == null;
+            var sourceRoot = isDrive ? DriveRoms[0] : DatabaseRoms[0];
+            var compareRoot = isDrive ? DatabaseRoms[0] : DriveRoms[0];
+            if (sourceRoot == null || compareRoot == null) return;
+            foreach (var rom in sourceRoot.AllRoms) {
+                rom.Selected = compareRoot.AllRoms.FirstOrDefault(x => x.Name.Equals(rom.Name)) == null;
             }
         }
 

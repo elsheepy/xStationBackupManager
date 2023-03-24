@@ -9,18 +9,21 @@ using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.Windows;
 using xStationBackupManager.Contracts;
+using xStationBackupManager.Enums;
 
 namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
         private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
         private readonly string[] ZipExtensions = new[] { ".7z", ".zip", ".bzip2", ".gzip", ".tar", ".rar" };
+        private readonly IRomCollectionAssigner[] _collectionAssigners;
 
         public event Events.ProgressEventHandler Progress;
         public event Events.RomEventHandler RomCompleted;
 
-        public RomManager(ILifetimeScope scope) {
+        public RomManager(ILifetimeScope scope, IRomCollectionAssigner[] collectionAssigners) {
             _scope = scope;
+            _collectionAssigners = collectionAssigners;
         }
 
         public IRom[] GetRoms(string path) {
@@ -109,6 +112,14 @@ namespace xStationBackupManager.Manager {
 
         private int GetTotalProgress(int romProgress) {
             return (_romsCompleted * 100 + romProgress) / _romsTotal;
+        }
+
+        public IRomCollection[] AssignRomsToCollection(IRom[] roms, RomGroup group) {
+            var assigner = _collectionAssigners.FirstOrDefault(x => x.RomGroup == group);
+            if(assigner != null) {
+                return assigner.AssignRomsToCollection(roms);
+            }
+            return null;
         }
 
         public async Task CheckAndFixDirectory(string directory) {

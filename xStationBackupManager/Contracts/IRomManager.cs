@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using xStationBackupManager.Enums;
 using xStationBackupManager.Events;
 
 namespace xStationBackupManager.Contracts {
@@ -7,6 +8,8 @@ namespace xStationBackupManager.Contracts {
         event RomEventHandler RomCompleted;
 
         IRom[] GetRoms(string path);
+
+        IRomCollection[] AssignRomsToCollection(IRom[] roms, RomGroup groups);
 
         Task<bool> TransferRoms(IRom[] roms, string target);
 
