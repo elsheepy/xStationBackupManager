@@ -14,7 +14,7 @@ using xStationBackupManager.Enums;
 namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
-        private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
+        private readonly string[] RomExtensions = new[] { ".bin", ".cue", ".iso" };
         private readonly string[] ZipExtensions = new[] { ".7z", ".zip", ".bzip2", ".gzip", ".tar", ".rar" };
         private readonly IRomCollectionAssigner[] _collectionAssigners;
 
@@ -148,6 +148,43 @@ namespace xStationBackupManager.Manager {
                 MessageBox.Show("Keine Fehler gefunden.", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Information);
             } else {
                 MessageBox.Show($"{fixedDirs.Count} Fehler gefunden:\r\n\r\n{String.Join("\r\n", fixedDirs)}", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        public Task RearrangeDrive(string drivePath, IRomCollection[] collections) {
+            var moved = 0;
+            foreach (var collection in collections) {
+                RearrangeCollection(drivePath, collection, ref moved);
+            }
+            DeleteEmptyFolders(drivePath);
+
+            MessageBox.Show($"{moved} Roms verschoben!", "SD-Karte organisiert", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            return Task.CompletedTask;
+        }
+
+        private void RearrangeCollection(string path, IRomCollection collection, ref int moved) {
+            path = $"{path}{collection.Name}\\".Replace("\\\\", "\\");
+            Directory.CreateDirectory(path);
+            foreach (var rom in collection.Roms) {
+                var newPath = $"{path}{rom.Name}";
+                if (rom.Path.Equals(newPath)) continue;
+                Directory.Move(rom.Path, newPath);
+                moved++;
+            }
+        }
+
+        private void DeleteEmptyFolders(string path) {
+            var dirInfo = new DirectoryInfo(path);
+            var files = dirInfo.GetFiles();
+            var dirs = dirInfo.GetDirectories();
+            if(files.Length == 0 && dirs.Length == 0) {
+                // delete
+                Directory.Delete(path);
+                return;
+            }
+            foreach(var dir in dirs) {
+                DeleteEmptyFolders(dir.FullName);
             }
         }
     }

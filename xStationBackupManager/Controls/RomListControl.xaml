@@ -16,6 +16,7 @@
             <Style x:Key="TreeViewItemStyle_ExpandAll" TargetType="{x:Type TreeViewItem}">
                 <Setter Property="IsExpanded" Value="True"/>
             </Style>
+            <BooleanToVisibilityConverter x:Key="BoolToVisitibiltyConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -28,6 +29,7 @@
             <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle abwählen" />
             <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen die nicht auf dem Ziel sind" />
             <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Ordnerstruktur auf fehler prüfen" />
+            <Button Content="{StaticResource IconRearrangeRoms}" Command="{Binding RearrangeRomsCommand}" Visibility="{Binding IsDrive, Converter={StaticResource BoolToVisitibiltyConverter}}" />
         </StackPanel>
         <ComboBox ItemsSource="{Binding RomGroupOptions}" SelectedItem="{Binding RomGroupString}" HorizontalAlignment="Right" />
         <TreeView Grid.Row="1" ItemsSource="{Binding Roms}" ItemContainerStyle="{StaticResource TreeViewItemStyle_ExpandAll}">

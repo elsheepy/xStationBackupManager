@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Autofac;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Navigation;
 using xStationBackupManager.Contracts;
 using xStationBackupManager.Enums;
 using xStationBackupManager.Views;
@@ -15,6 +16,7 @@ namespace xStationBackupManager.ViewModels {
         private readonly IOptionsManager _options;
         private readonly IRomManager _romManager;
         private readonly IOption _databasePathOption;
+        private readonly ILifetimeScope _scope;
 
         private RomRootViewModel[] _databaseRoms;
         private RomRootViewModel[] _driveRoms;
@@ -47,6 +49,8 @@ namespace xStationBackupManager.ViewModels {
         public RelayCommand<bool> SelectDeltaRomsCommand { get; }
 
         public RelayCommand<bool> CheckAndFixDirectoryCommand { get; }
+
+        public RelayCommand RearrangeRomsCommand { get; }
 
         public string DatabasePath {
             get => _databasePath;
@@ -134,7 +138,8 @@ namespace xStationBackupManager.ViewModels {
 
         public string LogText => _logText;
 
-        public MainWindowViewModel(IOptionsManager options, IRomManager romManager) {
+        public MainWindowViewModel(IOptionsManager options, IRomManager romManager, ILifetimeScope scope) {
+            _scope = scope;
             _options = options;
             _databasePathOption = _options.GetOption(Options.RomPath);
             _romManager = romManager;
@@ -157,6 +162,7 @@ namespace xStationBackupManager.ViewModels {
             DeselectAllRomsCommand = new RelayCommand<bool>(DeselectAllRomsCommandExecuted);
             SelectDeltaRomsCommand = new RelayCommand<bool>(SelectDeltaRomsCommandExecuted);
             CheckAndFixDirectoryCommand = new RelayCommand<bool>(CheckAndFixDirectoryCommandExecuted);
+            RearrangeRomsCommand = new RelayCommand(RearrangeRomsCommandExecuted);
 
             Log("Wilkommen");
         }
@@ -324,6 +330,26 @@ namespace xStationBackupManager.ViewModels {
             var path = isDrive ? DrivePath : DatabasePath;
             if (string.IsNullOrWhiteSpace(path)) return;
             _romManager.CheckAndFixDirectory(path);
+        }
+
+        private void RearrangeRomsCommandExecuted() {
+            var result = MessageBox.Show("Möchten Sie ihre SD-Karte neu organisieren?", "SD-Karte organisieren", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Cancel) return;
+            var root = _scope.Resolve<IRomCollection>();
+            root.Name = string.Empty;
+            var collections = new List<IRomCollection>();
+            foreach(var vm in DriveRoms[0].Entrys) {
+                var col = vm as RomCollectionViewModel;
+                if (col != null) {
+                    collections.Add(col.RomCollection);
+                    continue;
+                }
+                var rom = vm as RomViewModel;
+                if (rom == null) continue;
+                root.Roms.Add(rom.Rom);
+            }
+            if (root.Roms.Count > 0) collections.Add(root);
+            _romManager.RearrangeDrive(DrivePath, collections.ToArray());
         }
 
         private void Log(string message) {

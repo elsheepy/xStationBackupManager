@@ -14,5 +14,7 @@ namespace xStationBackupManager.Contracts {
         Task<bool> TransferRoms(IRom[] roms, string target);
 
         Task CheckAndFixDirectory(string directory);
+
+        Task RearrangeDrive(string drivePath, IRomCollection[] collections);
     }
 }
