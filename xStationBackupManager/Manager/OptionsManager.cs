@@ -56,7 +56,7 @@ namespace xStationBackupManager.Manager {
                 var jsonTxt = JsonConvert.SerializeObject(json);
                 File.WriteAllText(_optionsPath, jsonTxt);
             } catch (Exception ex) {
-                MessageBox.Show($"Konnte nicht speichern!\r\n\r\n{ex.Message}");
+                MessageBox.Show($"{Resources.Localization.Resources.CanNotSave}\r\n\r\n{ex.Message}");
             }
         }
 

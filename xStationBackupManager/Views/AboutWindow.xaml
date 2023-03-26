@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xStationBackupManager.Views"
+        xmlns:CC="clr-namespace:xStationBackupManager.Resources.Localization" 
         mc:Ignorable="d"
         DataContext="{Binding AboutWindowViewModel, Source={StaticResource ViewModelLocator}}"
         Title="X-Station Backup Manager" Height="200" Width="200">
@@ -14,7 +15,7 @@
                 <Run Text="Version" />
                 <Run Text="{Binding Version}" />
             </TextBlock>
-            <TextBlock Text="Diese Software steht unter der GPL v3.0 Lizenz"  TextWrapping="Wrap" Margin="0,3"/>
+            <TextBlock Text="{x:Static CC:Resources.LicenseText}"  TextWrapping="Wrap" Margin="0,3"/>
             <TextBlock Margin="0,3">           
                 <Hyperlink NavigateUri="https://github.com/elsheepy/xStationBackupManager" RequestNavigate="Hyperlink_RequestNavigate">
                     GitHub

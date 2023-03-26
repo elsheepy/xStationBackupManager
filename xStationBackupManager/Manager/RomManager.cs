@@ -145,9 +145,9 @@ namespace xStationBackupManager.Manager {
                 }
             }
             if(fixedDirs.Count == 0) {
-                MessageBox.Show("Keine Fehler gefunden.", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Resources.Localization.Resources.NoErrorsFound, Resources.Localization.Resources.CheckTitel, MessageBoxButton.OK, MessageBoxImage.Information);
             } else {
-                MessageBox.Show($"{fixedDirs.Count} Fehler gefunden:\r\n\r\n{String.Join("\r\n", fixedDirs)}", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"{fixedDirs.Count} {Resources.Localization.Resources.ErrorsFound}:\r\n\r\n{String.Join("\r\n", fixedDirs)}", Resources.Localization.Resources.CheckTitel, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -158,7 +158,7 @@ namespace xStationBackupManager.Manager {
             }
             DeleteEmptyFolders(drivePath);
 
-            MessageBox.Show($"{moved} Roms verschoben!", "SD-Karte organisiert", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"{moved} {Resources.Localization.Resources.RomsMoved}!", Resources.Localization.Resources.RearrangedSD, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return Task.CompletedTask;
         }

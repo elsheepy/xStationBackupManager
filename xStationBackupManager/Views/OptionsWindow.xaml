@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xStationBackupManager.Views"
+        xmlns:CC="clr-namespace:xStationBackupManager.Resources.Localization" 
         mc:Ignorable="d"
         DataContext="{Binding OptionsWindowViewModel, Source={StaticResource ViewModelLocator}}"
         Title="X-Station Backup Manager Einstellungen" Height="200" Width="400" Topmost="True">
@@ -17,6 +18,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -25,15 +27,18 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Label Content="Roms Pfad:" />
+                <Label Content="{x:Static CC:Resources.RomsPath}" />
                 <TextBox Grid.Column="1" Text="{Binding RomsPath}" />
-                <Button Grid.Column="2" Content="Durchsuchen" Command="{Binding BrowseRomPathCommand}" />
+                <Button Grid.Column="2" Content="{x:Static CC:Resources.Browse}" Command="{Binding BrowseRomPathCommand}" />
+                
+                <Label Grid.Row="1" Content="{x:Static CC:Resources.Language}" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Languages}" SelectedItem="{Binding LanguageString}" />
             </Grid>
         </GroupBox>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Verwerfen" Command="{Binding CloseCommand}" />
-            <Button Content="Speichern" Command="{Binding SaveCommand}" />
+            <Button Content="{x:Static CC:Resources.Cancel}" Command="{Binding CloseCommand}" />
+            <Button Content="{x:Static CC:Resources.Save}" Command="{Binding SaveCommand}" />
         </StackPanel>
     </Grid>
 </Window>

@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using xStationBackupManager.Contracts;
 using xStationBackupManager.Enums;
 using xStationBackupManager.ViewModels;
+using xStationBackupManager;
+using System.Collections.Generic;
 
 namespace xStationBackupManager.Controls {
     /// <summary>
@@ -17,6 +19,8 @@ namespace xStationBackupManager.Controls {
         public static DependencyProperty CommandProviderProperty = DependencyProperty.Register(nameof(CommandProvider), typeof(ISelectRomsCommandProvider), typeof(RomListControl), new PropertyMetadata(CommandProviderChanged));
         public static DependencyProperty IsDrivePropery = DependencyProperty.Register(nameof(IsDrive), typeof(bool), typeof(RomListControl));
         public static DependencyProperty RomGroupProperty = DependencyProperty.Register(nameof(RomGroup), typeof(RomGroup), typeof(RomListControl));
+
+        private Dictionary<string, RomGroup> _romGroupTranslation = new Dictionary<string, RomGroup>();
 
         private static void CommandProviderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             RomListControl ctrl = (RomListControl)d;
@@ -47,9 +51,9 @@ namespace xStationBackupManager.Controls {
         public string[] RomGroupOptions { get; set; }
 
         public string RomGroupString {
-            get => RomGroup.ToString();
+            get => xStationBackupManager.Resources.Localization.Resources.ResourceManager.GetString(RomGroup.ToString());
             set {
-                if(Enum.TryParse<RomGroup>(value, out var group)) {
+                if(_romGroupTranslation.TryGetValue(value, out var group)) {
                     RomGroup = group;
                 }
             }
@@ -68,7 +72,13 @@ namespace xStationBackupManager.Controls {
         public RelayCommand RearrangeRomsCommand => CommandProvider?.RearrangeRomsCommand;
 
         public RomListControl() {
-            RomGroupOptions = Enum.GetNames(typeof(RomGroup));
+            var romGroups = Enum.GetValues<RomGroup>();
+            RomGroupOptions = new string[romGroups.Length];
+            for(var i = 0; i < RomGroupOptions.Length; i++) {
+                var tmp = xStationBackupManager.Resources.Localization.Resources.ResourceManager.GetString(romGroups[i].ToString());
+                RomGroupOptions[i] = tmp;
+                _romGroupTranslation.Add(tmp, romGroups[i]);
+            }
             InitializeComponent();
         }
 

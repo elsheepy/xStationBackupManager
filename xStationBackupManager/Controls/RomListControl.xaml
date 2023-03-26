@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vms="clr-namespace:xStationBackupManager.ViewModels"
              xmlns:local="clr-namespace:xStationBackupManager.Controls"
+             xmlns:CC="clr-namespace:xStationBackupManager.Resources.Localization" 
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -25,11 +26,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen" />
-            <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle abwählen" />
-            <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Alle auswählen die nicht auf dem Ziel sind" />
-            <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" ToolTip="Ordnerstruktur auf fehler prüfen" />
-            <Button Content="{StaticResource IconRearrangeRoms}" Command="{Binding RearrangeRomsCommand}" Visibility="{Binding IsDrive, Converter={StaticResource BoolToVisitibiltyConverter}}" />
+            <Button Content="{StaticResource IconSelectAll}" Command="{Binding SelectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="{x:Static CC:Resources.SelectAll}" />
+            <Button Content="{StaticResource IconDeselectAll}" Command="{Binding DeselectAllRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="{x:Static CC:Resources.DeselectAll}" />
+            <Button Content="{StaticResource IconSelectDelta}" Command="{Binding SelectDeltaRomsCommand}" CommandParameter="{Binding IsDrive}" ToolTip="{x:Static CC:Resources.SelectDelta}" />
+            <Button Content="{StaticResource IconCheckAndFix}" Command="{Binding CheckAndFixDirectoryCommand}" CommandParameter="{Binding IsDrive}" ToolTip="{x:Static CC:Resources.CheckPathError}" />
+            <Button Content="{StaticResource IconRearrangeRoms}" Command="{Binding RearrangeRomsCommand}" Visibility="{Binding IsDrive, Converter={StaticResource BoolToVisitibiltyConverter}}" ToolTip="{x:Static CC:Resources.RearrangePath}" />
         </StackPanel>
         <ComboBox ItemsSource="{Binding RomGroupOptions}" SelectedItem="{Binding RomGroupString}" HorizontalAlignment="Right" />
         <TreeView Grid.Row="1" ItemsSource="{Binding Roms}" ItemContainerStyle="{StaticResource TreeViewItemStyle_ExpandAll}">

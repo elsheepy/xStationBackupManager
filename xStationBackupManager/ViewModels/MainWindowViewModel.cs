@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using xStationBackupManager.Contracts;
 using xStationBackupManager.Enums;
 using xStationBackupManager.Views;
@@ -164,7 +163,7 @@ namespace xStationBackupManager.ViewModels {
             CheckAndFixDirectoryCommand = new RelayCommand<bool>(CheckAndFixDirectoryCommandExecuted);
             RearrangeRomsCommand = new RelayCommand(RearrangeRomsCommandExecuted);
 
-            Log("Wilkommen");
+            Log(Resources.Localization.Resources.Welcome);
         }
 
         private void OnDatabasePathOptionChanged(object? sender, EventArgs e) {
@@ -185,14 +184,14 @@ namespace xStationBackupManager.ViewModels {
         }
 
         private void RomManagerOnRomCompleted(object sender, Events.RomEventArgs e) {
-            Log($"{CurrentRom} fertig");
+            Log($"{CurrentRom} {Resources.Localization.Resources.Finished}");
             CurrentRom = string.Empty;
         }
 
         private void RomManagerOnProgress(object sender, Events.ProgressEventArgs e) {
             if (string.IsNullOrWhiteSpace(CurrentRom)) {
                 CurrentRom = e.CurrentRom;
-                Log($"{CurrentRom} gestartet");
+                Log($"{CurrentRom} {Resources.Localization.Resources.Started}");
             }
             RomProgress = e.RomProgress;
             TotalProgress = e.TotalProgress;
@@ -267,7 +266,7 @@ namespace xStationBackupManager.ViewModels {
 
         private async Task TransferRoms(RomRootViewModel romRoot, string targetPath) {
             if(!Directory.Exists(targetPath)) {
-                MessageBox.Show("Es wurde kein gültiger Pfad angegeben", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Resources.Localization.Resources.ErrorPath, Resources.Localization.Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -278,13 +277,13 @@ namespace xStationBackupManager.ViewModels {
             }
 
             if (romList.Count == 0) {
-                MessageBox.Show("Es wurde keine Roms ausgewählt", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Resources.Localization.Resources.ErrorNoRoms, Resources.Localization.Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            Log($"Kopieren nach {targetPath} wird initialisiert");
+            Log(Resources.Localization.Resources.InitializeCopy.Replace("#PATH#", targetPath));
             await _romManager.TransferRoms(romList.ToArray(), targetPath);
-            Log($"Alle Roms kopiert");
+            Log(Resources.Localization.Resources.AllRomsCopied);
             
         }
 
@@ -333,7 +332,7 @@ namespace xStationBackupManager.ViewModels {
         }
 
         private void RearrangeRomsCommandExecuted() {
-            var result = MessageBox.Show("Möchten Sie ihre SD-Karte neu organisieren?", "SD-Karte organisieren", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            var result = MessageBox.Show(Resources.Localization.Resources.RearrangeSD, Resources.Localization.Resources.RearrangeSDTitel, MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (result == MessageBoxResult.Cancel) return;
             var root = _scope.Resolve<IRomCollection>();
             root.Name = string.Empty;
