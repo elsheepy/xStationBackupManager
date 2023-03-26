@@ -12,8 +12,12 @@ namespace xStationBackupManager.ViewModels {
 
         public Action CloseCallback { get; set; }
 
+        public string Version { get; set; }
+
         public AboutWindowViewModel() {
             CloseCommand = new RelayCommand(CloseCommandExecuted);
+            Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Version = $"v{Version.Substring(0, Version.Length - 2)}";
         }
 
         private void CloseCommandExecuted() {

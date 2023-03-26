@@ -7,12 +7,16 @@ using xStationBackupManager.Enums;
 
 namespace xStationBackupManager.Contracts {
     public interface IOption {
-        public event EventHandler Changed;
+        event EventHandler Changed;
 
-        public Options Option { get; set; }
+        Options Option { get; set; }
 
-        public string GetValue();
+        string GetValue();
 
-        public void SetValue(string value);
+        T GetValue<T>() where T : struct, IConvertible;
+
+        void SetValue(string value);
+
+        void SetValue(object value);
     }
 }

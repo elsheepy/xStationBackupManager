@@ -9,18 +9,21 @@ using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.Windows;
 using xStationBackupManager.Contracts;
+using xStationBackupManager.Enums;
 
 namespace xStationBackupManager.Manager {
     internal class RomManager : IRomManager {
         private readonly ILifetimeScope _scope;
-        private readonly string[] RomExtensions = new[] { ".bin", ".cue" };
+        private readonly string[] RomExtensions = new[] { ".bin", ".cue", ".iso" };
         private readonly string[] ZipExtensions = new[] { ".7z", ".zip", ".bzip2", ".gzip", ".tar", ".rar" };
+        private readonly IRomCollectionAssigner[] _collectionAssigners;
 
         public event Events.ProgressEventHandler Progress;
         public event Events.RomEventHandler RomCompleted;
 
-        public RomManager(ILifetimeScope scope) {
+        public RomManager(ILifetimeScope scope, IRomCollectionAssigner[] collectionAssigners) {
             _scope = scope;
+            _collectionAssigners = collectionAssigners;
         }
 
         public IRom[] GetRoms(string path) {
@@ -111,6 +114,14 @@ namespace xStationBackupManager.Manager {
             return (_romsCompleted * 100 + romProgress) / _romsTotal;
         }
 
+        public IRomCollection[] AssignRomsToCollection(IRom[] roms, RomGroup group) {
+            var assigner = _collectionAssigners.FirstOrDefault(x => x.RomGroup == group);
+            if(assigner != null) {
+                return assigner.AssignRomsToCollection(roms);
+            }
+            return null;
+        }
+
         public async Task CheckAndFixDirectory(string directory) {
             var fixedDirs = new List<string>();
             var directories = Directory.GetDirectories(directory);
@@ -134,9 +145,46 @@ namespace xStationBackupManager.Manager {
                 }
             }
             if(fixedDirs.Count == 0) {
-                MessageBox.Show("Keine Fehler gefunden.", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Resources.Localization.Resources.NoErrorsFound, Resources.Localization.Resources.CheckTitel, MessageBoxButton.OK, MessageBoxImage.Information);
             } else {
-                MessageBox.Show($"{fixedDirs.Count} Fehler gefunden:\r\n\r\n{String.Join("\r\n", fixedDirs)}", "Check & Fix", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"{fixedDirs.Count} {Resources.Localization.Resources.ErrorsFound}:\r\n\r\n{String.Join("\r\n", fixedDirs)}", Resources.Localization.Resources.CheckTitel, MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        public Task RearrangeDrive(string drivePath, IRomCollection[] collections) {
+            var moved = 0;
+            foreach (var collection in collections) {
+                RearrangeCollection(drivePath, collection, ref moved);
+            }
+            DeleteEmptyFolders(drivePath);
+
+            MessageBox.Show($"{moved} {Resources.Localization.Resources.RomsMoved}!", Resources.Localization.Resources.RearrangedSD, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            return Task.CompletedTask;
+        }
+
+        private void RearrangeCollection(string path, IRomCollection collection, ref int moved) {
+            path = $"{path}{collection.Name}\\".Replace("\\\\", "\\");
+            Directory.CreateDirectory(path);
+            foreach (var rom in collection.Roms) {
+                var newPath = $"{path}{rom.Name}";
+                if (rom.Path.Equals(newPath)) continue;
+                Directory.Move(rom.Path, newPath);
+                moved++;
+            }
+        }
+
+        private void DeleteEmptyFolders(string path) {
+            var dirInfo = new DirectoryInfo(path);
+            var files = dirInfo.GetFiles();
+            var dirs = dirInfo.GetDirectories();
+            if(files.Length == 0 && dirs.Length == 0) {
+                // delete
+                Directory.Delete(path);
+                return;
+            }
+            foreach(var dir in dirs) {
+                DeleteEmptyFolders(dir.FullName);
             }
         }
     }

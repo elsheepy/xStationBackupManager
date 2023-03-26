@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using xStationBackupManager.Assigner;
 using xStationBackupManager.Contracts;
 using xStationBackupManager.Manager;
 using xStationBackupManager.Models;
@@ -14,7 +15,10 @@ namespace xStationBackupManager {
             builder.RegisterType<OptionsManager>().As<IOptionsManager>().SingleInstance();
 
             builder.RegisterType<Rom>().As<IRom>();
+            builder.RegisterType<RomCollection>().As<IRomCollection>();
             builder.RegisterType<RomManager>().As<IRomManager>().SingleInstance();
+
+            builder.RegisterType<RomCollectionAlphabetAssigner>().As<IRomCollectionAssigner>().SingleInstance();
 
             builder.RegisterType<ViewModelLocator>().As<IViewModelLocator>().SingleInstance();
             builder.RegisterType<MainWindowViewModel>().As<IMainWindowViewModel>().SingleInstance();

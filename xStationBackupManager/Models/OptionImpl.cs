@@ -14,10 +14,20 @@ namespace xStationBackupManager.Models {
             return _value;
         }
 
+        public T GetValue<T>() where T : struct, IConvertible {
+            if (Enum.TryParse<T>(_value, out var enumValue)) return enumValue;
+            return default(T);
+        }
+
         public void SetValue(string value) {
             if (_value != null && _value.Equals(value)) return;
             _value = value;
             Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void SetValue(object value) {
+            if (value == null) return;
+            _value = value.ToString();
         }
     }
 }

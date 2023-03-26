@@ -1,7 +1,7 @@
 ﻿using xStationBackupManager.Contracts;
 
 namespace xStationBackupManager.ViewModels {
-    public class RomViewModel : ViewModelBase {
+    public class RomViewModel : RomEntryViewModel {
         private IRom _rom;
         private bool _selected;
 
@@ -15,7 +15,7 @@ namespace xStationBackupManager.ViewModels {
             }
         }
 
-        public string Name { get => _rom.Name; set => _rom.Name = value; }
+        public override string Name { get => _rom.Name; }
         public string Path { get => _rom.Path; set => _rom.Path = value; }
 
         public RomViewModel(IRom rom) {

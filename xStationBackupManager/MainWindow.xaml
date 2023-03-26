@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xStationBackupManager" xmlns:controls="clr-namespace:xStationBackupManager.Controls"
+        xmlns:CC="clr-namespace:xStationBackupManager.Resources.Localization" 
         mc:Ignorable="d"
         DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
         x:Name="Container"
@@ -47,12 +48,12 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="3">
-            <MenuItem Header="_Datei">
-                <MenuItem Header="_Einstellungen" Command="{Binding SettingsCommand}" />
+            <MenuItem Header="{x:Static CC:Resources.File}">
+                <MenuItem Header="{x:Static CC:Resources.Settings}" Command="{Binding SettingsCommand}" />
                 <Separator />
-                <MenuItem Header="_Beenden" Command="{Binding CloseCommand}" />
+                <MenuItem Header="{x:Static CC:Resources.Exit}" Command="{Binding CloseCommand}" />
             </MenuItem>
-            <MenuItem Header="_Über" Command="{Binding AboutCommand}" />
+            <MenuItem Header="{x:Static CC:Resources.About}" Command="{Binding AboutCommand}" />
         </Menu>
 
         <Grid Grid.Row="1">
@@ -61,13 +62,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding DatabasePath}" IsEnabled="false" />
-            <Button Grid.Column="1" Content="{StaticResource IconSettings}" Command="{Binding SettingsCommand}" />
+            <Button Grid.Column="1" Content="{StaticResource IconSettings}" Command="{Binding SettingsCommand}" ToolTip="{x:Static CC:Resources.Settings}" />
         </Grid>
-        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" />
+        <controls:RomListControl Grid.Row="2" Grid.Column="0" Roms="{Binding DataContext.DatabaseRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" RomGroup="{Binding DataContext.DatabaseRomGroup, Mode=TwoWay, ElementName=Container}" />
 
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">
-            <Button Content="{StaticResource IconArrowRight}" Command="{Binding TransferToDeviceCommand}" />
-            <Button Content="{StaticResource IconArrowLeft}" Command="{Binding TransferToDatabaseCommand}" />
+            <Button Content="{StaticResource IconArrowRight}" Command="{Binding TransferToDeviceCommand}" ToolTip="{x:Static CC:Resources.TransferToDrive}" />
+            <Button Content="{StaticResource IconArrowLeft}" Command="{Binding TransferToDatabaseCommand}" ToolTip="{x:Static CC:Resources.TransferToDatabase}" />
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="2">
@@ -76,12 +77,12 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding DrivePath}" />
-            <Button Grid.Column="1" Content="{StaticResource IconRefresh}" Command="{Binding RefreshDrivesCommand}" />
+            <Button Grid.Column="1" Content="{StaticResource IconRefresh}" Command="{Binding RefreshDrivesCommand}" ToolTip="{x:Static CC:Resources.Refresh}" />
         </Grid>
-        
-        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" IsDrive="True" />
 
-        <GroupBox Header="Progress" Grid.Row="3" Grid.Column="0">
+        <controls:RomListControl Grid.Row="2" Grid.Column="2" Roms="{Binding DataContext.DriveRoms, ElementName=Container}" CommandProvider="{Binding DataContext, ElementName=Container}" RomGroup="{Binding DataContext.DriveRomGroup, Mode=TwoWay, ElementName=Container}" IsDrive="True" />
+
+        <GroupBox Header="{x:Static CC:Resources.Progress}" Grid.Row="3" Grid.Column="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -94,7 +95,7 @@
                 <Label Grid.Row="0" Content="Rom:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                 <Label Grid.Row="1" Content="{Binding CurrentRom}" VerticalContentAlignment="Center" />
                 <ProgressBar Grid.Row="2" Minimum="0" Maximum="100" Value="{Binding RomProgress}" />
-                <Label Grid.Row="3" Content="Gesamt:" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <Label Grid.Row="3" Content="{x:Static CC:Resources.Total}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                 <ProgressBar Grid.Row="4" Minimum="0" Maximum="100" Value="{Binding TotalProgress}" />
             </Grid>
         </GroupBox>
